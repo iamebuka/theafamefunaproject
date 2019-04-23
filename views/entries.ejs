@@ -1,0 +1,98 @@
+<%- include('shared/header'); -%>
+<div class="App">
+  <div class="app-header">
+    <div class="ui inverted segment">
+      <div class="ui inverted secondary menu">
+        <a class="active item">Home</a>
+        <a class="item">Contribute</a>
+        <a class="item">Contact</a>
+      </div>
+    </div>
+    <div class="ui fluid container">
+      <div class="padding180">
+
+        <div class="ui text container">
+          <div class="ui fluid search ">
+            <div class="ui icon big input">
+              <input class="prompt" type="text" placeholder="Search names...">
+              <i class="search icon"></i>
+            </div>
+            <div class="results"></div>
+
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="padding-top: 100px">
+    <div class="ui very padded text container segment">
+      <% if(response) {%>
+      <h1><%= response.name %></h1>
+      <p><%= response.definition %></p>
+      <% } else { %>
+      <p> Not found</p>
+
+      <% } %>
+    </div>
+  </div>
+</div>
+</div>
+</body>
+  <script>
+
+    $(document).ready(function (params) {
+     
+      $('.ui.search')
+        .search({
+          apiSettings: {
+            url: '/search/{query}',
+            minCharacters: 3,
+            type: 'category',
+             onResponse: function (data) {
+              //console.log(data)
+              var
+                response = {
+                  results: []
+                };
+
+              $.each(data.results, function (index, item) {
+                var
+                  id = item.name || 'Unknown', maxResults = 8;
+                if (index >= maxResults) {
+                  return false;
+                }
+
+               
+                // add result to category
+                response.results.push({
+                  title: item.name,
+                  url: `/entries/${item.name}`
+                });
+
+              })
+              console.log(response)
+              return response;
+            } 
+
+          }
+          
+        })
+
+    })
+
+
+
+  </script>
+<style>
+
+
+.padding180 {
+    padding-top: 100px;
+}
+
+.app-header{
+  min-height: 300px
+}
+</style>
+</html>
