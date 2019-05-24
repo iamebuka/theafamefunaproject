@@ -10,18 +10,29 @@
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="/semantic/dist/semantic.min.js"></script>
+  <script type='text/javascript'
+    src='//platform-api.sharethis.com/js/sharethis.js#property=5ce85cbcaf7d000012cb0c83&product=sticky-share-buttons'
+    async='async'></script>
+
   <title>The Afamefuna Project</title>
   <script>
 
     $(document).ready(function (params) {
-     
+  $('.message .close')
+  .on('click', function() {
+    $(this)
+      .closest('.message')
+      .transition('fade')
+    ;
+  })
+;
       $('.ui.search')
         .search({
           apiSettings: {
             url: 'search/{query}',
             minCharacters: 3,
             type: 'category',
-             onResponse: function (data) {
+            onResponse: function (data) {
               //console.log(data)
               var
                 response = {
@@ -35,7 +46,7 @@
                   return false;
                 }
 
-               
+
                 // add result to category
                 response.results.push({
                   title: item.name,
@@ -45,10 +56,10 @@
               })
               console.log(response)
               return response;
-            } 
+            }
 
           }
-          
+
         })
 
     })
@@ -57,79 +68,50 @@
 
   </script>
 </head>
+
 <body>
-  <div class="App">
-    <div class="app-header">
-      <div class="ui inverted segment">
-        <div class="ui inverted secondary menu">
-          <a class="active item">Home</a>
-          <a class="item">Contribute</a>
-          <a class="item">Contact</a>
-        </div>
-      </div>
-      <div class="ui fluid container">
-        <div class="padding180">
+  <%- include("./shared/header")%>
 
-          <div class="ui text container">
-            <p class="ui huge header">WELCOME TO THE AFAMEFUNA PROJECT</p>
-            <div class="ui fluid search ">
-              <div class="ui icon big input">
-                <input class="prompt" type="text" placeholder="Search names...">
-                <i class="search icon"></i>
-              </div>
-              <div class="results"></div>
-            </div>
-
-
-            <br />
-            <p>
-              Welcome to The-Afamefuna-Project, your ticket to seeing all of
-              the wonders our world has to offer. As a professional
-              Archaeological Guide, I am here to show you the diverse
-              delights of landscape, culture, and cuisine throughout your
-              travel journey. Take a moment to explore the various tour
-              packages I offer and feel free to get in touch if you have any
-              questions.
-            </p>
-
-          </div>
-        </div>
-      </div>
-    </div>
-    <%#  <div class="about">
+  <div class="app-header">
     <div class="ui fluid container">
-      <img class="ui medium centered circular image" src="../assets/earth.jpg" />
-      <br />
-      <br />
-      <div class="ui text container">
-        <p class="ui medium header centered">ABOUT THEAFAMEFUNAPROJECT</p>
-        <p>
-          As a professional Archaeological Guide, I excel at helping you
-          plan your perfect vacation. Not just any vacation, but truly
-          exceptional trips filled with inspiring and enriching
-          experiences. I believe in seeing the world in the most unique
-          way possible, and I want to share my knowledge and passion for
-          travel and tourism with all of those whom I guide. Explore my
-          site to find out more.
-        </p>
-      </div>
-    </div>
-  </div>
-  <div class="panel ui fluid container">
-    <div class="split ui container">
-      <div class="ui text container">
+      <div class="padding180">
+
         <div class="ui text container">
-          <p class="ui medium header centered">
-            ABOUT THEAFAMEFUNAPROJECT
+          <p class="ui huge header">WELCOME TO THE AFAMEFUNA PROJECT</p>
+          <p class="ui tagline">Over 1000 entries yet & counting</p>
+          <div class="ui fluid search ">
+            <div class="ui icon big input">
+              <input class="prompt" type="text" placeholder="Search names...">
+              <i class="search icon"></i>
+            </div>
+            <div class="results"></div>
+          </div>
+
+
+          <br />
+          <p class="tagline">
+            Whatever dialect of the Igbo Language you speak, you can find your name here,
+            we are interested in learning what your name means, and we can help you find the meaning.
+            Use the 'Contribute' section freely to improve community experience.
           </p>
+
         </div>
       </div>
     </div>
   </div>
-  <div id="footer">
-    footer
-  </div> %>
   </div>
+  <%if(message.length > 1){ %>
+  <div class="ui info message transition">
+    <i class="close icon"></i>
+    <div class="header">
+      Message!
+    </div>
+    <%=message%>
+  </div>
+
+  <%}%>
+
+     <div class="sharethis-inline-share-buttons"></div>
 </body>
 
 </html>

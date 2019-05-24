@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Signup | The Afamefuna Project</title>
+  <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/index.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="/semantic/dist/semantic.min.js"></script>
+</head>
+
+<body>
+ 
+     <div class="ui two column centered grid">
+      <div class="column" style="width: 450px; margin:70px auto; padding: 35px 20px 48px;">
+      <h2 style="text-align:center">Signup<h2>
+        <form class="ui form" method="POST" action="/signup">
+          <div class="field">
+            <label>Name</label>
+            <div class="field">
+              <input type="text" name="fname" placeholder="First Name">
+            </div>
+          </div>
+          <div class="field">
+            <label>Last Name</label>
+            <div class="field">
+              <input type="text" name="lname" placeholder="Last Name">
+            </div>
+          </div>
+          <div class="field">
+            <label>Email</label>
+            <div class="field">
+              <input type="text" name="email" placeholder="Email">
+            </div>
+          </div>
+          <div class="field">
+            <label>Password</label>
+            <div class="field">
+              <input type="password" name="password" placeholder="Password">
+            </div>
+          </div>
+           <button class="ui primary button">
+  Register
+</button>
+          </form>
+
+      </div>
+    </div>
+
+</body>
+
+</html>
