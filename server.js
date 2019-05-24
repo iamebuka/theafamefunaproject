@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
-const csv = require('csv-parser');
+//const csv = require('csv-parser');
 require('dotenv').config();
 const afamefuna = require('./model/afamefuna');
 const User = require('./model/user');
