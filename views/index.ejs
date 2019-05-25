@@ -18,14 +18,20 @@
   <script>
 
     $(document).ready(function (params) {
-  $('.message .close')
-  .on('click', function() {
-    $(this)
-      .closest('.message')
-      .transition('fade')
-    ;
-  })
-;
+
+     
+
+      $('.message .close')
+        .on('click', function () {
+          $(this)
+            .closest('.message')
+            .transition('fade')
+            ;
+        })
+        ;
+
+
+
       $('.ui.search')
         .search({
           apiSettings: {
@@ -54,7 +60,7 @@
                 });
 
               })
-              console.log(response)
+             
               return response;
             }
 
@@ -74,7 +80,7 @@
 
   <div class="app-header">
     <div class="ui fluid container">
-      <div class="padding180">
+      <div class="padding">
 
         <div class="ui text container">
           <p class="ui huge header">WELCOME TO THE AFAMEFUNA PROJECT</p>
@@ -90,8 +96,8 @@
 
           <br />
           <p class="tagline">
-            Whatever dialect of the Igbo Language you speak, you can find your name here,
-            we are interested in learning what your name means, and we can help you find the meaning.
+            Whatever dialect of the Igbo Language you speak, you can find your name here.
+            We are interested in learning what your name means or we can help you find the meaning.
             Use the 'Contribute' section freely to improve community experience.
           </p>
 

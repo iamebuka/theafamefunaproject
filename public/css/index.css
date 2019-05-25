@@ -1,6 +1,8 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap');
+
 .tagline{
-  font-style: italic;
   letter-spacing: 1.5px;
+  font-family: 'Roboto Condensed', sans-serif;
   }
 
 .ui.tagline{
@@ -11,12 +13,6 @@ body{
   margin: 0px;
   text-align:left;
   background-color: #ececec
-}
-
-.panel {
-  background-color: #000;
-
-  padding: 100px 0px;
 }
 
 .app-header {
@@ -47,33 +43,28 @@ background-position-x: -4px;
 }
 
 .app-header .ui.header {
-  color: #fff;
+  color: #CF9237;
 }
 
-
-.padding180 {
-  padding-top: 180px;
+.padding {
+  padding-top: 77px;
 }
-  
-  
+
+ 
 .padding55 {
   padding-top: 55px
 }
   
 
 /**overwrite library **/
-.ui.menu{
-  border-radius: 0px;
-  margin: 0px;
+
+.ui.inverted.menu {
+  border: none;
   -webkit-box-shadow: none;
 	box-shadow: none;
 }
-.ui.inverted.menu {
-	-webkit-box-shadow: none;
-	box-shadow: none;
-}
 .ui.huge.header {
-  font-size: 41px;
+  font-size: 25px;
   letter-spacing: 5px;
 text-align: center;
 }
@@ -81,9 +72,7 @@ text-align: center;
   text-align: center;
   font-size: 25px;
 }
-.ui.placeholder.segment {
-  background-color: #000;
-}
+
 .ui.medium.header {
   font-size: 2.286em;
 }
@@ -144,4 +133,29 @@ text-align: center;
 
 .ui.menu .item{
   padding:26px
+}
+
+.ui.inverted.menu .active.item {
+	color: #CF9237;
+}
+
+.ui.inverted.menu .item, .ui.inverted.menu .item > a:not(.ui) {
+	color: #CF9237;
+}
+.ui.inverted.menu .active.item {
+	color: #CF9237;
+}
+
+.ui.inverted.menu .item, .ui.inverted.menu .item > a:not(.ui) {
+	color: #CF9237;
+}
+
+@media(min-width: 800px){
+  .padding{
+    padding-top: 180px
+  }
+
+  .ui.huge.header {
+    font-size: 41px;
+    }
 }
