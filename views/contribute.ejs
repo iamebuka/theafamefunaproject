@@ -36,8 +36,19 @@
       
     </div>
   </div>
+  
   <div class="ui grid container">
+
     <div class="twelve wide column " style="margin:20px auto; padding: 35px 20px 48px;">
+       <% if(message){ %>
+    <div class="ui positive message">
+  <i class="close icon"></i>
+  <div class="header">
+    Thanks for contributing to the Afamefuna project
+  </div>
+  <p> You would get an email once entry is accepted! </p>
+</div>
+  <%}%>
       <h2 style="text-align:center">Contribute<h2>
           <form class="ui form" method="POST" action="/contribute">
             <div class="required field">
@@ -73,6 +84,15 @@
 <script>
 
   $(document).ready(function (params) {
+    
+    
+      $('.message .close')
+        .on('click', function () {
+          $(this)
+            .closest('.message')
+            .transition('fade')
+            ;
+        });
 
     $('.ui.search')
       .search({
