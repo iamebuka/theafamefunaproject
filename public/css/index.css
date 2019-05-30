@@ -57,7 +57,9 @@ background-position-x: -4px;
   
 
 /**overwrite library **/
-
+.ui.menu{
+  border-radius: 0px;
+}
 .ui.inverted.menu {
   border: none;
   -webkit-box-shadow: none;
