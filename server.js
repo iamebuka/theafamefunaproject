@@ -1,7 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const fs = require('fs');
-//const csv = require('csv-parser');
+// const csv = require('csv-parser');
 require('dotenv').config();
 const afamefuna = require('./model/afamefuna');
 const User = require('./model/user');
@@ -169,8 +169,8 @@ app.post('/signin', passport.authenticate('local', {
   failureRedirect: '/signin',
 }))
 
-/* 
-app.get('/migrate', function (req, res) {
+
+/* app.get('/migrate', function (req, res) {
   if(!req.user) {res.redirect("/signin"); return;}
   res.render('migrate');
   
@@ -181,7 +181,7 @@ app.post('/migrate', function (req, res) {
   fs.createReadStream('name.csv')
     .pipe(csv())
     .on('data', (row) => {
-
+      console.log(row);
       const afam = new afamefuna({
         "name": row.name,
         "definition": row.definition,
@@ -198,7 +198,7 @@ app.post('/migrate', function (req, res) {
       res.redirect('/');
     });
 })
-  */
+   */
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback',
