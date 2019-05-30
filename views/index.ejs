@@ -21,16 +21,6 @@
 
      
 
-      $('.message .close')
-        .on('click', function () {
-          $(this)
-            .closest('.message')
-            .transition('fade')
-            ;
-        })
-        ;
-
-
 
       $('.ui.search')
         .search({
@@ -106,16 +96,6 @@
     </div>
   </div>
   </div>
-  <%if(message.length > 1){ %>
-  <div class="ui info message transition">
-    <i class="close icon"></i>
-    <div class="header">
-      Message!
-    </div>
-    <%=message%>
-  </div>
-
-  <%}%>
 
      <div class="sharethis-inline-share-buttons"></div>
 </body>
