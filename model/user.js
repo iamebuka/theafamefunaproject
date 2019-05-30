@@ -16,8 +16,7 @@ var userSchema = new mongoose.Schema({
 
 userSchema.methods.isValidPassword = function (password) {
     if (this.accounts) {
-        console.log("isValidPassword:", this.accounts)
-        hash = this.accounts[0].password;
+     hash = this.accounts[0].password;
         return bcrypt.compare(password, hash).then(function (res) {
             return res;
         });
