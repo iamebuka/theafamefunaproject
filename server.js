@@ -13,7 +13,7 @@ const localStrategy = require('passport-local').Strategy;
 const twitterStrategy = require('passport-twitter').Strategy;
 const session = require('express-session');
 var bcrypt = require('bcrypt');
-var url = require('url');
+var https = require('https');
 var saltRounds = 10;
 var flash = require("connect-flash");
 
@@ -28,6 +28,7 @@ app.use(session({
   secret: 'randomwordgenerator',
   resave: true,
   saveUninitialized: true,
+  cookie: { secure: false }
 
 }));
 app.use(passport.initialize());
@@ -35,7 +36,7 @@ app.use(passport.session());
 app.use(flash());
 
 app.use(function (req, res, next) {
-  console.log("username", req.user)
+
   next()
 })
 //setup local strategy
@@ -88,31 +89,31 @@ app.set('view engine', 'ejs');
 
 
 app.get('/', function (req, res) {
-  console.log("flash", req.flash("info"))
-  res.render('index', { user: req.user, message: req.flash("info") });
+   res.render('index', { user: req.user });
 });
 
 app.get('/search/:query', function (req, res) {
   // res.json({ content: "searching" }) fix the search regex to ignore case
-  afamefuna.find({ name: { $regex: req.params.query, $options:'i'} }).exec()
+  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' } }).exec()
     .catch(function (err) {
-      console.log(err);
+    
     }).then(function (data) {
       res.send({ success: true, results: [...data] });
     });
 });
 
 app.get('/entries/:name', function (req, res) {
-  afamefuna.findOne({ name: req.params.name  }).exec().catch(function (err) {
-    console.log(err);
+  afamefuna.findOne({ name: req.params.name }).exec().catch(function (err) {
+    
   }).then(function (resp) {
-    console.log(resp);
+   
     res.render('entries', { response: resp, user: req.user });
   });
 });
 
 app.get('/contribute', function (req, res) {
-   res.render('contribute', { name: req.query.q, user: req.user });
+  console.log("flash", req.flash('info'))
+  res.render('contribute', { name: req.query.q, user: req.user, message: false});
 });
 
 app.post('/contribute', function (req, res) {
@@ -122,12 +123,12 @@ app.post('/contribute', function (req, res) {
     email: req.body.email
   })
 
-  suggestion.save(function(err){
-    if(err) next(err);
-    req.flash("info", "Suggestion successfully submitted!")
-    res.redirect("/")
-  })
- 
+  suggestion.save(function (err) {
+    if (err) next(err);
+    req.flash("info", "You would get an email once entry is accepted!")
+    res.render('contribute', { name: req.query.q, user: req.user, message: true });
+   })
+
 });
 
 
@@ -168,13 +169,16 @@ app.post('/signin', passport.authenticate('local', {
   failureRedirect: '/signin',
 }))
 
-
-/* app.get('/migrate', function (req, res) {
+/* 
+app.get('/migrate', function (req, res) {
+  if(!req.user) {res.redirect("/signin"); return;}
   res.render('migrate');
+  
 })
 
 app.post('/migrate', function (req, res) {
-  fs.createReadStream('NAMESv.3.csv')
+ 
+  fs.createReadStream('name.csv')
     .pipe(csv())
     .on('data', (row) => {
 
@@ -194,7 +198,7 @@ app.post('/migrate', function (req, res) {
       res.redirect('/');
     });
 })
- */
+  */
 
 app.get('/auth/twitter', passport.authenticate('twitter'));
 app.get('/auth/twitter/callback',
@@ -203,11 +207,13 @@ app.get('/auth/twitter/callback',
     failureRedirect: '/',
   }));
 
+setInterval(function () {
+  https.get('https://theafamefunaproject.herokuapp.com/')
+}, 300000)
 
-
-  app.get("*", function(req, res){
+app.get("*", function (req, res) {
   res.redirect("/")
-  })
+})
 
 app.listen(process.env.PORT || 3000, function () {
   console.log('listening on port 3000');
