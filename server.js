@@ -103,7 +103,7 @@ app.get('/search/:query', function (req, res) {
 });
 
 app.get('/entries/:name', function (req, res) {
-  afamefuna.findOne({ name: req.params.name }).exec().catch(function (err) {
+  afamefuna.findOneAndUpdate({ name: req.params.name }, {$inc:{ lookup_count: 1}}).exec().catch(function (err) {
     
   }).then(function (resp) {
    
