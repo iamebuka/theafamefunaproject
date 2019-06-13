@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Approvals | The Afamefuna Project</title>
+  <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
+  <link rel="stylesheet" type="text/css" href="/css/index.css">
+  <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+    integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+  <script src="/semantic/dist/semantic.min.js"></script>
+
+</head>
+
+<body>
+  <%- include("./shared/header")%>
+  <br>
+  <br>
+  <br>
+  <div class="ui column grid centered stackable">
+ <div class="twelve wide column">
+  <div class="ui small breadcrumb">
+  <a href="/admin" class="section">Home</a>
+  <i class="right chevron icon divider"></i>
+  <a class="active section">Approval <%= suggestions.length %></a>
+ 
+</div>
+
+ </div>
+</div>
+<br>
+<br>
+  <div class="ui column stackable centered grid">
+    <div class=" two wide column">
+     <%- include("./shared/menu")%>
+    </div>
+    <div class="ten wide column">
+  
+    <table class="ui celled padded table">
+  <thead>
+    <tr>
+    <th>Action</th>
+    <th class="single line left">Entry</th>
+    <th>Definition</th>
+    <th>Suggested by</th>
+   </tr>
+   </thead>
+  <tbody>
+    <% if(suggestions) {%>
+      
+      
+        <% suggestions.forEach(function(suggestion){ %>
+        <tr>
+        <td>
+          <div class="ui two buttons">
+             <form  method="POST" action="/admin/approvals/approve/<%= suggestion.id %>">
+              <button class="ui basic green button">Approve</button>
+               </form>
+              <form  method="POST" action="/admin/approvals/decline/<%= suggestion.id %>">
+              <button class="ui basic red button">Decline</button>
+              </form>
+            </div>
+        </td>
+        <td>
+         <a href="/admin/approvals/<%= suggestion._id %>"> <%= suggestion.name %> </a>
+        </td>
+        <td>
+         <%= suggestion.definition %>
+         </td>
+        <td>
+         <%= suggestion.email %>
+         </td>
+       </tr>
+        
+        <% })%>
+      </tbody>
+       
+       <% } %>
+    </div>
+
+  </div>
+</body>
+<script>
+
+  $(document).ready(function (params) {
+
+  })
+
+
+
+</script>
+<style>
+
+</style>
+
+</html>

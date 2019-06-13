@@ -7,16 +7,19 @@ const afamefuna = require('./model/afamefuna');
 const User = require('./model/user');
 const Suggestions = require('./model/suggest')
 const bodyParser = require('body-parser');
-mongoose.connect(`mongodb://${process.env.DB_USER}:${process.env.DB_PASSWORD}@ds251807.mlab.com:51807/db_afamefuna`, { useNewUrlParser: true });
+mongoose.connect(process.env.DB_CONN_STRING, { useNewUrlParser: true, dbName: "db-afamefuna" });
+var db = mongoose.connection;
 const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const twitterStrategy = require('passport-twitter').Strategy;
 const session = require('express-session');
+const nodemailer = require("nodemailer");
+const message = require("./template.json")
 var bcrypt = require('bcrypt');
 var https = require('https');
 var saltRounds = 10;
 var flash = require("connect-flash");
-
+var authMiddleWare = require('./authentication/middleware')
 
 const app = express();
 
@@ -31,14 +34,12 @@ app.use(session({
   cookie: { secure: false }
 
 }));
+
+
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
-app.use(function (req, res, next) {
-
-  next()
-})
 //setup local strategy
 passport.use(new localStrategy(
   function (username, password, done) {
@@ -86,34 +87,100 @@ passport.use(new twitterStrategy({
 app.set('views', './views');
 app.set('view engine', 'ejs');
 
+async function approve(id, user) { //use mongo transaction here
+  const session = await User.startSession();
+  session.startTransaction();
+
+  try {
+    const opts = { session };
+    let A = await Suggestions.findByIdAndUpdate(id, {accepted: true, approval_status: true}, opts)
+    let B = await afamefuna.findOne({ name: A.name }, {}, opts)
+    
+    if (B) { // entry already exist
+      let C = await afamefuna.update({ name: B.name }, { definition: B.definition }, opts)
+    } else {
+      let D = await afamefuna.insertMany([{
+        "name": A.name,
+        "definition": A.definition,
+        'entry_by': user
+      }], opts)
+    }
+    await session.commitTransaction();
+    session.endSession();
+    return A
+    
+
+  } catch (e) {
+    await session.abortTransaction();
+    session.endSession();
+    throw e;
+  }
+
+}
+
+function decline(id) {
+  return new Promise(function (resolve, reject) {
+    Suggestions.findByIdAndUpdate(id, { approval_status: true, accepted: false })
+      .catch(reject(err))
+      .then(function (suggestion) {
+        resolve(suggestion)
+      })
+  })
+}
+
+async function mailer(receiverObj, subject, type) {
+  let transporter = nodemailer.createTransport({
+    host: process.env.MAILER_HOST,
+    port: process.env.MAILER_PORT,
+    tls: {
+      rejectUnauthorized: false
+    },
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: process.env.MAILER_USER,
+      pass: process.env.MAILER_PASS
+    }
+  });
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: `"The Afamefuna Project" <${process.env.MAILER_PRIMARY_MAIL}>`, // sender address
+    to: receiverObj.email, // list of receivers
+    subject: subject, // Subject line
+    text: message[type].text.replace("[link]", `http://myigboname.com/entries/${receiverObj.name}`),
+    html: message[type].html.replace("[link]", `http://myigboname.com/entries/${receiverObj.name}`)
+  });
+
+  
+ 
+}
 
 
 app.get('/', function (req, res) {
-   res.render('index', { user: req.user });
+  res.render('index', { user: req.user });
 });
 
 app.get('/search/:query', function (req, res) {
   // res.json({ content: "searching" }) fix the search regex to ignore case
   afamefuna.find({ name: { $regex: req.params.query, $options: 'i' } }).exec()
     .catch(function (err) {
-    
+
     }).then(function (data) {
       res.send({ success: true, results: [...data] });
     });
 });
 
 app.get('/entries/:name', function (req, res) {
-  afamefuna.findOneAndUpdate({ name: req.params.name }, {$inc:{ lookup_count: 1}}).exec().catch(function (err) {
-    
+  afamefuna.findOneAndUpdate({ name: req.params.name }, { $inc: { lookup_count: 1 } }).exec().catch(function (err) {
+
   }).then(function (resp) {
-   
+
     res.render('entries', { response: resp, user: req.user });
   });
 });
 
 app.get('/contribute', function (req, res) {
-  console.log("flash", req.flash('info'))
-  res.render('contribute', { name: req.query.q, user: req.user, message: false});
+    res.render('contribute', { name: req.query.q, user: req.user, message: false });
 });
 
 app.post('/contribute', function (req, res) {
@@ -127,8 +194,71 @@ app.post('/contribute', function (req, res) {
     if (err) next(err);
     req.flash("info", "You would get an email once entry is accepted!")
     res.render('contribute', { name: req.query.q, user: req.user, message: true });
-   })
+  })
 
+});
+
+app.get('/admin/approvals', authMiddleWare(), function (req, res) {
+  Suggestions.find({ approval_status: false }).exec()
+    .catch(function (err) {
+
+    }).then(function (data) {
+      res.render('approvals', { success: true, suggestions: [...data], user: req.user });
+    });
+});
+
+app.get('/admin/approvals/:id', authMiddleWare(), function (req, res) {
+  let id = req.params.id
+  Suggestions.findById(id).exec()
+    .catch(function (err) {
+
+    }).then(function (suggestion) {
+      res.render('approval', { suggestion, user: req.user });
+    });
+});
+
+app.post('/admin/approvals/:action/:id', authMiddleWare(), function (req, res) {
+  if (req.params.action == "approve") {
+    approve(req.params.id, req.user).then(function (suggestion) {
+      
+      mailer(suggestion, "RE: Contribution", "approval")
+      
+    }).catch(function (e) { console.log("catch error", e) })
+
+  } else {
+    decline(req.params.id).then(function (suggestion) {
+      mailer(suggestion, "RE: Contribution", "denial")
+    })
+  }
+
+  res.redirect("/admin/approvals")
+});
+
+
+app.get('/admin/', authMiddleWare(), function (req, res) {
+  afamefuna.find().exec().then(function (data) {
+    res.render('list', { entries: data, user: req.user });
+  })
+
+});
+
+app.get('/admin/new', authMiddleWare(), function (req, res) {
+  res.render('new', { user: req.user });
+});
+
+
+app.get('/admin/edit/:entry', authMiddleWare(), function (req, res) {
+  if (!req.params.entry) res.redirect("/admin")
+  afamefuna.findOne({ name: req.params.entry }).exec().then(function (entry) {
+       res.render('edit', { entry, user: req.user });
+  })
+});
+
+
+app.post('/admin/edit', authMiddleWare(), function (req, res) {
+  afamefuna.findByIdAndUpdate(req.body.id, { definition: req.body.edit }).exec().then(function (entry) {
+    res.send({ success: true });
+  })
 });
 
 
@@ -165,7 +295,7 @@ app.get('/signin', function (req, res) {
 })
 
 app.post('/signin', passport.authenticate('local', {
-  successRedirect: '/',
+  successRedirect: '/admin',
   failureRedirect: '/signin',
 }))
 

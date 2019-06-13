@@ -4,7 +4,7 @@ var user = require('./user')
 const afamefunaSchema = new mongoose.Schema({
     "name": String,
     "definition": String,
-    "lookup_count": Number,
+    "lookup_count": {type: Number, default: 0},
     "approval_status": { type: Boolean, default: true },
     "entry_by": user.schema,
     "entry_date": { default: new Date(), type: Date },
