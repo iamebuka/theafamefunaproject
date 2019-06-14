@@ -30,13 +30,12 @@
     $(document).ready(function (params) {
 
      
-
-
+     
       $('.ui.search')
         .search({
           apiSettings: {
             url: 'search/{query}',
-            minCharacters: 3,
+            minCharacters: 2,
             type: 'category',
             onResponse: function (data) {
               //console.log(data)
@@ -47,7 +46,7 @@
 
               $.each(data.results, function (index, item) {
                 var
-                  id = item.name || 'Unknown', maxResults = 8;
+                  id = item.name || 'Unknown', maxResults = 100;
                 if (index >= maxResults) {
                   return false;
                 }

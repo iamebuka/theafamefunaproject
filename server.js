@@ -93,9 +93,9 @@ async function approve(id, user) { //use mongo transaction here
 
   try {
     const opts = { session };
-    let A = await Suggestions.findByIdAndUpdate(id, {accepted: true, approval_status: true}, opts)
+    let A = await Suggestions.findByIdAndUpdate(id, { accepted: true, approval_status: true }, opts)
     let B = await afamefuna.findOne({ name: A.name }, {}, opts)
-    
+
     if (B) { // entry already exist
       let C = await afamefuna.update({ name: B.name }, { definition: B.definition }, opts)
     } else {
@@ -108,7 +108,7 @@ async function approve(id, user) { //use mongo transaction here
     await session.commitTransaction();
     session.endSession();
     return A
-    
+
 
   } catch (e) {
     await session.abortTransaction();
@@ -151,8 +151,8 @@ async function mailer(receiverObj, subject, type) {
     html: message[type].html.replace("[link]", `http://myigboname.com/entries/${receiverObj.name}`)
   });
 
-  
- 
+
+
 }
 
 
@@ -162,9 +162,9 @@ app.get('/', function (req, res) {
 
 app.get('/search/:query', function (req, res) {
   // res.json({ content: "searching" }) fix the search regex to ignore case
-  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' } }).exec()
+  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' }}).exec()
     .catch(function (err) {
-       console.log("query error", err)
+      console.log("query error", err)
     }).then(function (data) {
       console.log("query response", data)
       res.send({ success: true, results: [...data] });
@@ -181,7 +181,7 @@ app.get('/entries/:name', function (req, res) {
 });
 
 app.get('/contribute', function (req, res) {
-    res.render('contribute', { name: req.query.q, user: req.user, message: false });
+  res.render('contribute', { name: req.query.q, user: req.user, message: false });
 });
 
 app.post('/contribute', function (req, res) {
@@ -221,9 +221,9 @@ app.get('/admin/approvals/:id', authMiddleWare(), function (req, res) {
 app.post('/admin/approvals/:action/:id', authMiddleWare(), function (req, res) {
   if (req.params.action == "approve") {
     approve(req.params.id, req.user).then(function (suggestion) {
-      
+
       mailer(suggestion, "RE: Contribution", "approval")
-      
+
     }).catch(function (e) { console.log("catch error", e) })
 
   } else {
@@ -251,7 +251,7 @@ app.get('/admin/new', authMiddleWare(), function (req, res) {
 app.get('/admin/edit/:entry', authMiddleWare(), function (req, res) {
   if (!req.params.entry) res.redirect("/admin")
   afamefuna.findOne({ name: req.params.entry }).exec().then(function (entry) {
-       res.render('edit', { entry, user: req.user });
+    res.render('edit', { entry, user: req.user });
   })
 });
 
@@ -300,6 +300,10 @@ app.post('/signin', passport.authenticate('local', {
   failureRedirect: '/signin',
 }))
 
+app.get('/logout', function (req, res) {
+ req.logout();
+ res.redirect("/");
+})
 
 /* app.get('/migrate', function (req, res) {
   if(!req.user) {res.redirect("/signin"); return;}

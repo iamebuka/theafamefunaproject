@@ -1,9 +1,9 @@
-<div class="container"> 
-<header class="ui inverted menu">
+<div class="container">
+  <header class="ui inverted menu">
     <a href="/" class="item">
       Home
     </a>
-    <a  href="/contribute" class="item">
+    <a href="/contribute" class="item">
       Contribute
     </a>
     <a href="/contact" class="item">
@@ -11,17 +11,26 @@
     </a>
     <div class="right menu">
       <% if(user){%>
-      <a class="ui item">
-        Logout &nbsp; &nbsp; <%- user.email %>
-      </a>
+      <div class="ui dropdown item">
+        <%= user.email %> <i class="dropdown icon"></i>
+        <div class="menu">
+          <a class="item" href="/admin">Dashboard</a>
+          <a class="item" href="/logout">Logout</a>
+        </div>
+      </div>
       <% } else {%>
       <a class="ui item" href="/signin">
         Signin
       </a>
-     
+
       <%}%>
 
      
     </div>
   </header>
 </div>
+<script>
+$(document).ready(function(){
+   $('.ui.dropdown').dropdown();
+})
+</script>

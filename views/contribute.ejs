@@ -47,9 +47,9 @@
     </div>
   </div>
   
-  <div class="ui grid container">
+  <div class="ui stackable centered grid">
 
-    <div class="twelve wide column " style="margin:20px auto; padding: 35px 20px 48px;">
+    <div class="twelve wide mobile eight wide computer  column" style="margin:20px auto; padding: 35px 20px 48px;">
        <% if(message){ %>
     <div class="ui positive message">
   <i class="close icon"></i>
@@ -59,6 +59,7 @@
   <p> You would get an email once entry is accepted! </p>
 </div>
   <%}%>
+  <br>
       <h2 style="text-align:center">Contribute<h2>
           <form class="ui form" method="POST" action="/contribute">
             <div class="required field">
@@ -89,6 +90,10 @@
 
     </div>
   </div>
+  <br>
+  <br>
+  <br>
+  <br>
 <div class="sharethis-inline-share-buttons"></div>
 </body>
 <script>
@@ -108,7 +113,7 @@
       .search({
         apiSettings: {
           url: '/search/{query}',
-          minCharacters: 3,
+          minCharacters: 2,
           type: 'category',
           onResponse: function (data) {
             //console.log(data)
@@ -119,7 +124,7 @@
 
             $.each(data.results, function (index, item) {
               var
-                id = item.name || 'Unknown', maxResults = 8;
+                id = item.name || 'Unknown', maxResults = 10;
               if (index >= maxResults) {
                 return false;
               }
