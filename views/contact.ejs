@@ -32,41 +32,54 @@
     <div class="seven wide column ">
       <div class="ui centered column grid">
         <div class="fourteen wide mobile nine wide computer column">
-        <br>
           <br>
-       <%#   <div class="ui positive message">
+          <br>
+  <%if(success) {%>
+  <div class="ui positive message">
   
   <div class="header">
     Your message has been recieved
   </div>
   <p> We would revert back to you as soon as possible</p>
-</div> %>
-          
+</div>
+
+<%}%>
+<%if(success == false) {%>
+  <div class="ui error message">
+  
+  <div class="header">
+    Incomplete form
+  </div>
+  <p> Please fill in all appropriate field</p>
+</div>
+
+<%}%>
+
           <h2 style="text-align: center">Send us a Message</h2>
           <br>
           <br>
-          <div class="ui big form">
+          <form class="ui big form" method="POST" action="/contact">
 
             <div class="field">
-                   <input type="text" placeholder="Email">
+              <input type="text" name="email" placeholder="Email">
             </div>
 
             <div class="field">
-              
-              <input type="text" placeholder="Subject">
+
+              <input type="text" name="subject" placeholder="Subject">
             </div>
             <div class="field">
 
-                         <textarea placeholder="message"></textarea>
+              <textarea name="message" placeholder="message"></textarea>
             </div>
             <div class="two fields">
               <div class="field">
-                
-                <input type="text" placeholder="First name">
+
+                <input type="text" name="fname" placeholder="First name">
               </div>
               <div class="field">
-               
-                <input type="text" placeholder="Last name">
+
+                <input type="text" name="lname" placeholder="Last name">
               </div>
             </div>
             <br>
@@ -74,30 +87,30 @@
             <div class="field">
               <button class="ui button primary fluid"> Submit</button>
             </div>
-          </div>
+          </form>
         </div>
       </div>
     </div>
-    <div class="four wide column"  style="background-color: #fff;">
+    <div class="four wide column" style="background-color: #fff;">
 
       <div class="ui centered column grid">
         <div class="twelve wide mobile six wide computer column">
-         <div class="social center">
-          <button class="ui circular facebook icon button">
-            <i class="facebook icon"></i>
-          </button>
-          <button class="ui circular twitter icon button">
-            <i class="twitter icon"></i>
-          </button>
-        
-          </div>
-       
+          <div class="social center">
+            <a href="https://www.facebook.com/afamefunaproject" class="ui circular facebook icon button">
+              <i class="facebook icon"></i>
+            </a>
+            <a href="https://www.twitter.com/myigboname" class="ui circular twitter icon button">
+              <i class="twitter icon"></i>
+            </a>
 
-                  <div class="contact-card">
-            <p><i class="icon envelope outline"></i> General Inquiry</p>
-              <span>info@myigboname.com</span>
           </div>
-         
+
+
+          <div class="contact-card">
+            <p><i class="icon envelope outline"></i> General Inquiry</p>
+            <span>info@myigboname.com</span>
+          </div>
+
         </div>
       </div>
     </div>
@@ -107,41 +120,6 @@
 <script>
 
   $(document).ready(function (params) {
-    $('.ui.search')
-      .search({
-        apiSettings: {
-          url: '/search/{query}',
-          minCharacters: 3,
-          type: 'category',
-          onResponse: function (data) {
-            //console.log(data)
-            var
-              response = {
-                results: []
-              };
-
-            $.each(data.results, function (index, item) {
-              var
-                id = item.name || 'Unknown', maxResults = 8;
-              if (index >= maxResults) {
-                return false;
-              }
-
-
-              // add result to category
-              response.results.push({
-                title: item.name,
-                url: `/entries/${item.name}`
-              });
-
-            })
-            console.log(response)
-            return response;
-          }
-
-        }
-
-      })
 
   })
 

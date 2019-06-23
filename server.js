@@ -186,6 +186,32 @@ async function mailer(receiverObj, subject, type) {
 
 }
 
+async function sendContactMail(contact) {
+  let transporter = nodemailer.createTransport({
+    host: process.env.MAILER_HOST,
+    port: process.env.MAILER_PORT,
+    tls: {
+      rejectUnauthorized: false
+    },
+    secure: false, // true for 465, false for other ports
+    auth: {
+      user: process.env.MAILER_USER,
+      pass: process.env.MAILER_PASS
+    }
+  });
+
+  // send mail with defined transport object
+  let info = await transporter.sendMail({
+    from: `"Reply: Contact Page" <${process.env.MAILER_PRIMARY_MAIL}>`, // sender address
+    to: `"The Afamefuna Project" <${process.env.MAILER_PRIMARY_MAIL}>`,
+    subject: contact.subject, // Subject line
+    text: `from: ${contact.fname} ${contact.lname} /n ReplyTo: ${contact.email} /n Message: ${contact.message}`,
+    html: `from: ${contact.fname} ${contact.lname} <br> ReplyTo: ${contact.email}  <br> Message: ${contact.message}`
+  });
+
+
+
+}
 
 app.get('/', function (req, res) {
   res.render('index', { user: req.user });
@@ -211,12 +237,24 @@ app.get('/entries/:name', function (req, res) {
   });
 });
 
-app.get('/contribute', function (req, res) {
-  res.render('contribute', { name: req.query.q, user: req.user, message: false });
-});
 
 app.get('/contact', function (req, res) {
-  res.render('contact', {user: req.user });
+  res.render('contact', {user: req.user, success: null });
+});
+
+app.post('/contact', function (req, res) {
+  let mail = Object.assign({}, req.body)
+  if(mail.email && mail.subject && mail.fname && mail.lname && mail.subject){
+     sendContactMail(mail)
+     res.render('contact', {user: req.user, success: true });
+  }else{
+    res.render('contact', {user: req.user, success: false });
+  }
+ 
+ });
+
+ app.get('/contribute', function (req, res) {
+  res.render('contribute', { name: req.query.q, user: req.user, message: false });
 });
 
 app.post('/contribute', function (req, res) {
