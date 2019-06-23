@@ -1,21 +1,45 @@
 <div class="ui vertical menu">
-  <a  href="/admin/" class="active teal item">
-    All Entries
-  
-  </a>
-  <a  href="/admin/new" class="item">
-    New entry
-   
-  </a>
-  <a href="/admin/approvals" class="item">
-    Approvals
-   
-  </a>
-  
   <div class="item">
-    <div class="ui transparent icon input">
-      <input type="text" placeholder="Search...">
-      <i class="search icon"></i>
+    <div class="ui input"><input type="text" placeholder="Search..."></div>
+  </div>
+  <div class="item">
+    Home
+    <div class="menu">
+      <a class="item">Dashboard</a>
+      <a href="/admin/new" class="item">New Entry</a>
+      <a href="/admin/" class="active item">Entries</a>
+    </div>
+  </div>
+   <div class="item">
+    Approvals
+    <div class="menu">
+      <a href="/admin/approvals" class="item">View Approvals</a>
+      <a class="item">Review Denials</a>
+      <a class="item">Remove</a>
+    </div>
+  </div>
+   <div class="item">
+    Users
+    <div class="menu">
+      <a class="item">Create User</a>
+      <a class="item">Reset Password</a>
+      <a class="item">Manage User</a>
+      <a class="item">Role Management</a>
+    </div>
+  </div>
+  <a class="item">
+    <i class="grid layout icon"></i> Browse
+  </a>
+  <a class="item">
+    Messages
+  </a>
+  <div class="ui dropdown item">
+    More
+    <i class="dropdown icon"></i>
+    <div class="menu">
+      <a class="item"><i class="edit icon"></i> Edit Profile</a>
+      <a class="item"><i class="globe icon"></i> Choose Language</a>
+      <a class="item"><i class="settings icon"></i> Account Settings</a>
     </div>
   </div>
 </div>

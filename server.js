@@ -118,6 +118,37 @@ async function approve(id, user) { //use mongo transaction here
 
 }
 
+async function updateAndApprove(id, user) { //use mongo transaction here
+  const session = await User.startSession();
+  session.startTransaction();
+
+  try {
+    const opts = { session };
+    let A = await Suggestions.findByIdAndUpdate(id, { accepted: true, approval_status: true }, opts)
+    let B = await afamefuna.findOne({ name: A.name }, {}, opts)
+
+    if (B) { // entry already exist
+      let C = await afamefuna.update({ name: B.name }, { definition: B.definition }, opts)
+    } else {
+      let D = await afamefuna.insertMany([{
+        "name": A.name,
+        "definition": A.definition,
+        'entry_by': user
+      }], opts)
+    }
+    await session.commitTransaction();
+    session.endSession();
+    return A
+
+
+  } catch (e) {
+    await session.abortTransaction();
+    session.endSession();
+    throw e;
+  }
+
+}
+
 function decline(id) {
   return new Promise(function (resolve, reject) {
     Suggestions.findByIdAndUpdate(id, { approval_status: true, accepted: false })
@@ -184,6 +215,10 @@ app.get('/contribute', function (req, res) {
   res.render('contribute', { name: req.query.q, user: req.user, message: false });
 });
 
+app.get('/contact', function (req, res) {
+  res.render('contact', {user: req.user });
+});
+
 app.post('/contribute', function (req, res) {
   let suggestion = new Suggestions({
     name: req.body.name,
@@ -237,7 +272,7 @@ app.post('/admin/approvals/:action/:id', authMiddleWare(), function (req, res) {
 
 
 app.get('/admin/', authMiddleWare(), function (req, res) {
-  afamefuna.find().exec().then(function (data) {
+  afamefuna.find().sort({name: 1}).exec().then(function (data) {
     res.render('list', { entries: data, user: req.user });
   })
 
