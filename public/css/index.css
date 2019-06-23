@@ -70,7 +70,10 @@ background-position-x: -4px;
 .padding55 {
   padding-top: 55px
 }
-  
+
+.desc{
+  padding-top: 12px
+}
 
 /**overwrite library **/
 header.ui.menu{
@@ -180,6 +183,10 @@ header.ui.menu .item{
 @media(min-width: 800px){
   .padding{
     padding-top: 180px
+  }
+  
+  .desc{
+    padding-top: 28px
   }
 
   .ui.huge.header {
