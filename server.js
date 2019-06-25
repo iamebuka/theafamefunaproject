@@ -13,11 +13,10 @@ const passport = require('passport');
 const localStrategy = require('passport-local').Strategy;
 const twitterStrategy = require('passport-twitter').Strategy;
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const nodemailer = require("nodemailer");
 const message = require("./template.json")
-var bcrypt = require('bcrypt');
 var https = require('https');
-var saltRounds = 10;
 var flash = require("connect-flash");
 var authMiddleWare = require('./authentication/middleware')
 
@@ -31,7 +30,8 @@ app.use(session({
   secret: 'randomwordgenerator',
   resave: true,
   saveUninitialized: true,
-  cookie: { secure: false }
+  cookie: { secure: false },
+  store: new MongoStore({url: process.env.DB_CONN_STRING})
 
 }));
 
@@ -219,7 +219,7 @@ app.get('/', function (req, res) {
 
 app.get('/search/:query', function (req, res) {
   // res.json({ content: "searching" }) fix the search regex to ignore case
-  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' }}).exec()
+  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' }}).sort({name : 1}).exec()
     .catch(function (err) {
       console.log("query error", err)
     }).then(function (data) {
