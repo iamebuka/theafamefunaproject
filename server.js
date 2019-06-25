@@ -415,9 +415,9 @@ app.get('/auth/twitter/callback',
     failureRedirect: '/',
   }));
 
-setInterval(function () {
+/* setInterval(function () {
   https.get('https://theafamefunaproject.herokuapp.com/')
-}, 300000)
+}, 300000) */
 
 app.get("*", function (req, res) {
   res.redirect("/")
