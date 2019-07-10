@@ -219,11 +219,10 @@ app.get('/', function (req, res) {
 
 app.get('/search/:query', function (req, res) {
   // res.json({ content: "searching" }) fix the search regex to ignore case
-  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' }}).sort({name : 1}).exec()
+  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' }}, "name").sort({name : 1}).exec()
     .catch(function (err) {
       console.log("query error", err)
     }).then(function (data) {
-      console.log("query response", data)
       res.send({ success: true, results: [...data] });
     });
 });
