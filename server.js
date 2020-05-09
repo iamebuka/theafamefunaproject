@@ -1,11 +1,8 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const fs = require('fs');
-// const csv = require('csv-parser');
 require('dotenv').config();
-const afamefuna = require('./model/afamefuna');
-const User = require('./model/user');
-const Suggestions = require('./model/suggest')
+const afamefunaModel = require('./model/afamefuna');
+const userModel = require('./model/user');
 const bodyParser = require('body-parser');
 mongoose.connect(process.env.DB_CONN_STRING, { useNewUrlParser: true, dbName: "db-afamefuna" });
 var db = mongoose.connection;
@@ -14,36 +11,52 @@ const localStrategy = require('passport-local').Strategy;
 const twitterStrategy = require('passport-twitter').Strategy;
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-const nodemailer = require("nodemailer");
-const message = require("./template.json")
+const cron = require('cron').CronJob;
+const sample = require("./utils").sample
+const secure = require('express-force-https');
 var https = require('https');
-var flash = require("connect-flash");
-var authMiddleWare = require('./authentication/middleware')
+const flash = require("connect-flash");
+
+const ghostContentAPI = require('@tryghost/content-api');
+const { adminRoute, authRoute, indexRoute } = require('./router')
+
+
+const api = new ghostContentAPI({
+  url: process.env.GHOST_URL, // remember to move to .env file
+  key: process.env.GHOST_KEY,
+  version: "v3"
+});
 
 const app = express();
 
-
+app.use(secure)
 app.use(express.static('public'));
 app.use(bodyParser.json());
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
-  secret: 'randomwordgenerator',
+  secret: process.env.SESSION_SECRETS,
   resave: true,
   saveUninitialized: true,
   cookie: { secure: false },
-  store: new MongoStore({url: process.env.DB_CONN_STRING})
+  store: new MongoStore({ url: process.env.DB_CONN_STRING })
 
 }));
-
-
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(flash());
 
+app.use(async function (req, res, next) {
+  let posts = await api.posts.browse({ limit: 10, include: 'tags,authors' });
+  res.locals.posts = posts;
+  res.locals.success_messages = req.flash('success_messages');
+  next();
+});
+
 //setup local strategy
 passport.use(new localStrategy(
   function (username, password, done) {
-    User.findOne({ 'accounts.uid': username }, '_id firstname lastname email accounts.password', function (err, user) {
+    userModel.findOne({ 'accounts.uid': username }, '_id firstname lastname email accounts.password', function (err, user) {
 
       if (err) { return done(err); }
       if (!user) {
@@ -58,168 +71,47 @@ passport.use(new localStrategy(
   }
 ))
 
-passport.serializeUser(function (user, done) {
-  done(null, user._id);
-});
-
-passport.deserializeUser(function (id, done) {
-  User.findOne({ _id: id }, '_id firstname lastname email', function (err, user) {
-    done(err, user);
-  });
-});
-
-
 passport.use(new twitterStrategy({
   consumerKey: process.env.TWITTER_CONSUMER_KEY,
   consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL: 'https://theafamefunaproject.herokuapp.com/auth/twitter/callback'
+  callbackURL: `${process.env.HOST_URL}/auth/twitter/callback`
 },
   function (token, tokenSecret, profile, done) {
-    User.findOrCreate(profile, function (err, user) {
+    userModel.findOrCreate(profile, function (err, user) {
       if (err) { return done(err); }
       done(null, user);
     })
   }
 ))
 
+passport.serializeUser(function (user, done) {
+  done(null, user._id);
+});
 
+passport.deserializeUser(function (id, done) {
+  userModel.findOne({ _id: id }, '_id firstname lastname email', function (err, user) {
+    done(err, user);
+  });
+});
 
 app.set('views', './views');
 app.set('view engine', 'ejs');
 
-async function approve(id, user) { //use mongo transaction here
-  const session = await User.startSession();
-  session.startTransaction();
 
-  try {
-    const opts = { session };
-    let A = await Suggestions.findByIdAndUpdate(id, { accepted: true, approval_status: true }, opts)
-    let B = await afamefuna.findOne({ name: A.name }, {}, opts)
-
-    if (B) { // entry already exist
-      let C = await afamefuna.update({ name: B.name }, { definition: B.definition }, opts)
-    } else {
-      let D = await afamefuna.insertMany([{
-        "name": A.name,
-        "definition": A.definition,
-        'entry_by': user
-      }], opts)
-    }
-    await session.commitTransaction();
-    session.endSession();
-    return A
-
-
-  } catch (e) {
-    await session.abortTransaction();
-    session.endSession();
-    throw e;
-  }
-
-}
-
-async function updateAndApprove(id, user) { //use mongo transaction here
-  const session = await User.startSession();
-  session.startTransaction();
-
-  try {
-    const opts = { session };
-    let A = await Suggestions.findByIdAndUpdate(id, { accepted: true, approval_status: true }, opts)
-    let B = await afamefuna.findOne({ name: A.name }, {}, opts)
-
-    if (B) { // entry already exist
-      let C = await afamefuna.update({ name: B.name }, { definition: B.definition }, opts)
-    } else {
-      let D = await afamefuna.insertMany([{
-        "name": A.name,
-        "definition": A.definition,
-        'entry_by': user
-      }], opts)
-    }
-    await session.commitTransaction();
-    session.endSession();
-    return A
-
-
-  } catch (e) {
-    await session.abortTransaction();
-    session.endSession();
-    throw e;
-  }
-
-}
-
-function decline(id) {
-  return new Promise(function (resolve, reject) {
-    Suggestions.findByIdAndUpdate(id, { approval_status: true, accepted: false })
-      .catch(reject(err))
-      .then(function (suggestion) {
-        resolve(suggestion)
-      })
-  })
-}
-
-async function mailer(receiverObj, subject, type) {
-  let transporter = nodemailer.createTransport({
-    host: process.env.MAILER_HOST,
-    port: process.env.MAILER_PORT,
-    tls: {
-      rejectUnauthorized: false
-    },
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.MAILER_USER,
-      pass: process.env.MAILER_PASS
-    }
-  });
-
-  // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: `"The Afamefuna Project" <${process.env.MAILER_PRIMARY_MAIL}>`, // sender address
-    to: receiverObj.email, // list of receivers
-    subject: subject, // Subject line
-    text: message[type].text.replace("[link]", `http://myigboname.com/entries/${receiverObj.name}`),
-    html: message[type].html.replace("[link]", `http://myigboname.com/entries/${receiverObj.name}`)
-  });
-
-
-
-}
-
-async function sendContactMail(contact) {
-  let transporter = nodemailer.createTransport({
-    host: process.env.MAILER_HOST,
-    port: process.env.MAILER_PORT,
-    tls: {
-      rejectUnauthorized: false
-    },
-    secure: false, // true for 465, false for other ports
-    auth: {
-      user: process.env.MAILER_USER,
-      pass: process.env.MAILER_PASS
-    }
-  });
-
-  // send mail with defined transport object
-  let info = await transporter.sendMail({
-    from: `"Reply: Contact Page" <${process.env.MAILER_PRIMARY_MAIL}>`, // sender address
-    to: `"The Afamefuna Project" <${process.env.MAILER_PRIMARY_MAIL}>`,
-    subject: contact.subject, // Subject line
-    text: `from: ${contact.fname} ${contact.lname} /n ReplyTo: ${contact.email} /n Message: ${contact.message}`,
-    html: `from: ${contact.fname} ${contact.lname} <br> ReplyTo: ${contact.email}  <br> Message: ${contact.message}`
-  });
-
-
-
-}
-
-app.get('/', function (req, res) {
-  res.render('index', { user: req.user });
-});
 
 app.get('/search/:query', function (req, res) {
-  // res.json({ content: "searching" }) fix the search regex to ignore case
-  afamefuna.find({ name: { $regex: req.params.query, $options: 'i' }}, "name").sort({name : 1}).exec()
+  afamefunaModel
+    .aggregate([
+      { $match: { name: { $regex: req.params.query, $options: 'i' } } },
+      {
+        $project: {
+          name: 1,
+          name_length: { $strLenCP: "$name" }
+        }
+      },
+      { $sort: { name_length: 1 } },
+      { $project: { name_length: 0 } }
+    ]).exec()
     .catch(function (err) {
       console.log("query error", err)
     }).then(function (data) {
@@ -227,200 +119,28 @@ app.get('/search/:query', function (req, res) {
     });
 });
 
-app.get('/entries/:name', function (req, res) {
-  afamefuna.findOneAndUpdate({ name: req.params.name }, { $inc: { lookup_count: 1 } }).exec().catch(function (err) {
 
-  }).then(function (resp) {
+app.use("/", indexRoute)
+app.use("/admin", adminRoute);
+app.use("/auth", authRoute);
 
-    res.render('entries', { response: resp, user: req.user });
-  });
-});
-
-
-app.get('/contact', function (req, res) {
-  res.render('contact', {user: req.user, success: null });
-});
-
-app.post('/contact', function (req, res) {
-  let mail = Object.assign({}, req.body)
-  if(mail.email && mail.subject && mail.fname && mail.lname && mail.subject){
-     sendContactMail(mail)
-     res.render('contact', {user: req.user, success: true });
-  }else{
-    res.render('contact', {user: req.user, success: false });
-  }
- 
- });
-
- app.get('/contribute', function (req, res) {
-  res.render('contribute', { name: req.query.q, user: req.user, message: false });
-});
-
-app.post('/contribute', function (req, res) {
-  let suggestion = new Suggestions({
-    name: req.body.name,
-    definition: req.body.meaning,
-    email: req.body.email
-  })
-
-  suggestion.save(function (err) {
-    if (err) next(err);
-    req.flash("info", "You would get an email once entry is accepted!")
-    res.render('contribute', { name: req.query.q, user: req.user, message: true });
-  })
-
-});
-
-app.get('/admin/approvals', authMiddleWare(), function (req, res) {
-  Suggestions.find({ approval_status: false }).exec()
-    .catch(function (err) {
-
-    }).then(function (data) {
-      res.render('approvals', { success: true, suggestions: [...data], user: req.user });
-    });
-});
-
-app.get('/admin/approvals/:id', authMiddleWare(), function (req, res) {
-  let id = req.params.id
-  Suggestions.findById(id).exec()
-    .catch(function (err) {
-
-    }).then(function (suggestion) {
-      res.render('approval', { suggestion, user: req.user });
-    });
-});
-
-app.post('/admin/approvals/:action/:id', authMiddleWare(), function (req, res) {
-  if (req.params.action == "approve") {
-    approve(req.params.id, req.user).then(function (suggestion) {
-
-      mailer(suggestion, "RE: Contribution", "approval")
-
-    }).catch(function (e) { console.log("catch error", e) })
-
-  } else {
-    decline(req.params.id).then(function (suggestion) {
-      mailer(suggestion, "RE: Contribution", "denial")
-    })
-  }
-
-  res.redirect("/admin/approvals")
-});
-
-
-app.get('/admin/', authMiddleWare(), function (req, res) {
-  afamefuna.find().sort({name: 1}).exec().then(function (data) {
-    res.render('list', { entries: data, user: req.user });
-  })
-
-});
-
-app.get('/admin/new', authMiddleWare(), function (req, res) {
-  res.render('new', { user: req.user });
-});
-
-
-app.get('/admin/edit/:entry', authMiddleWare(), function (req, res) {
-  if (!req.params.entry) res.redirect("/admin")
-  afamefuna.findOne({ name: req.params.entry }).exec().then(function (entry) {
-    res.render('edit', { entry, user: req.user });
-  })
-});
-
-
-app.post('/admin/edit', authMiddleWare(), function (req, res) {
-  afamefuna.findByIdAndUpdate(req.body.id, { definition: req.body.edit }).exec().then(function (entry) {
-    res.send({ success: true });
-  })
-});
-
-
-/* app.get('/signup', function (req, res) {
-  res.render('signup', { user: req.user });
-})
-
-app.post('/signup', function (req, res, next) {
-  bcrypt.hash(req.body.password, saltRounds).then(function (hash) {
-    User.findOne({ email: req.body.email },
-      function (err, user) {
-        if (err) next(err)
-        if (user) res.redirect("/signin")
-        let u = new User({
-          firstname: req.body.fname,
-          lastname: req.body.lname,
-          email: req.body.email,
-          accounts: [{ provider: 'internal', uid: req.body.email.split("@")[0], password: hash }]
-        })
-        u.save(function (err, user) {
-          if (err) next(err)
-          if (user) {
-            req.login(user, function (err) {
-              if (!err) res.redirect('/')
-            })
-          };
-        })
-      })
-  });
-})
- */
-app.get('/signin', function (req, res) {
-  res.render('login', { user: req.user });
-})
-
-app.post('/signin', passport.authenticate('local', {
-  successRedirect: '/admin',
-  failureRedirect: '/signin',
-}))
-
-app.get('/logout', function (req, res) {
- req.logout();
- res.redirect("/");
-})
-
-/* app.get('/migrate', function (req, res) {
-  if(!req.user) {res.redirect("/signin"); return;}
-  res.render('migrate');
-  
-})
-
-app.post('/migrate', function (req, res) {
- 
-  fs.createReadStream('name.csv')
-    .pipe(csv())
-    .on('data', (row) => {
-      console.log(row);
-      const afam = new afamefuna({
-        "name": row.name,
-        "definition": row.definition,
-        "lookup_count": "0",
-        'entry_by': req.user,
-
-      })
-
-
-      afam.save()
-    })
-    .on('end', () => {
-      console.log('CSV file successfully processed');
-      res.redirect('/');
-    });
-})
-   */
-
-app.get('/auth/twitter', passport.authenticate('twitter'));
-app.get('/auth/twitter/callback',
-  passport.authenticate('twitter', {
-    successRedirect: '/',
-    failureRedirect: '/',
-  }));
-
-/* setInterval(function () {
-  https.get('https://theafamefunaproject.herokuapp.com/')
-}, 300000) */
-
-app.get("*", function (req, res) {
+app.get("*", function (req, res, next) { // catch all route handler
   res.redirect("/")
 })
+
+app.use(function (err, req, res, next) { // error handler
+  res.status(500)
+  res.render('error', { error: err.message })
+})
+
+// cron job to create a sample of name from the afam collection.
+// future update would be to save the data in a redis cache.
+
+var job = new cron("* 59 23 * * *", function() {
+   sample();
+}, null, false)
+
+job.start();
 
 app.listen(process.env.PORT || 3000, function () {
   console.log('listening on port 3000');

@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:site" content="@myigboname" />
+    <meta property="og:url" content="http://www.myigboname.com/" />
+    <meta property="og:title" content="The Afamefuna Project" />
+    <meta property="og:description"
+        content="Whatever dialect of the Igbo Language you speak, you can find your name here. We are interested in learning what your name means or we can help you find the meaning." />
+    <meta property="og:image" content="http://myigboname.com/assets/site-image.png" />
+
+    <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/index.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"
+        integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
+    <script src="/semantic/dist/semantic.min.js"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80337204-3"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-80337204-3');
+    </script>
+
+    <script type='text/javascript'
+        src='//platform-api.sharethis.com/js/sharethis.js#property=5ce85cbcaf7d000012cb0c83&product=sticky-share-buttons'
+        async='async'></script>
+
+    <title>The Afamefuna Project</title>
+    <script>
+
+        $(document).ready(function (params) {
+
+
+
+            $('.ui.search')
+                .search({
+                    apiSettings: {
+                        url: 'search/{query}',
+                        minCharacters: 2,
+                        type: 'category',
+                        onResponse: function (data) {
+                            //console.log(data)
+                            var
+                                response = {
+                                    results: []
+                                };
+
+                            $.each(data.results, function (index, item) {
+                                var
+                                    id = item.name || 'Unknown', maxResults = 5;
+                                if (index >= maxResults) {
+                                    return false;
+                                }
+
+
+                                // add result to category
+                                response.results.push({
+                                    title: item.name,
+                                    url: `/entries/${item.name.toLowerCase()}`
+                                });
+
+                            })
+
+                            return response;
+                        }
+
+                    }
+
+                })
+
+        })
+
+
+
+    </script>
+</head>
+
+<body>
+    <%- include("./shared/header")%>
+    <div class="ui container"
+        style="background-color: #fff; box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);  padding: 120px 0px; min-height: 600px;">
+        <div class="ui centered">
+            <div class="column">
+                <div class="ui text fluid container">
+                    <p class="ui tagline" style="margin: 5px auto;">Find the meaning of Igbo names</p>
+                    <div class="ui search ">
+                        <div class="ui icon input">
+                            <input class="prompt" type="text" placeholder="Search names..." value="">
+                            <i class="search icon"></i>
+                        </div>
+                        <div class="results"></div>
+
+
+                    </div>
+                </div>
+                <div class="ui text container">
+                    <div class="very padded" style="margin-top: 50px;">
+                        <h1>Igbo Names starting with <%= index.toUpperCase() %> </h1>
+                        <% if(data) {%>
+                        <div class="ui list">
+                            <% data.forEach(element => { %>
+                            <div class="item">
+                                <div class="content">
+                                    <a href="/entries/<%- element.name.toLowerCase() %>"><%- element.name %> </a>
+                                </div>
+                            </div>
+                            <% }) %>
+                        </div>
+                        <% } %>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+    <%- include("./shared/footer")%>
+
+    <div class="sharethis-inline-share-buttons"></div>
+
+    <% if (locals.success_messages.length > 0) { %>
+    <div class="ui positive compact floating message" style="position: fixed; top: 100px; right: 10px">
+        <i class="close icon"></i>
+        <div class="header">
+            Message Sent
+        </div>
+        <p><%- locals.success_messages %> </p>
+    </div>
+    <% } %>
+
+    <script>
+        $(document).ready(function () {
+            $('.message .close')
+                .on('click', function () {
+                    $(this)
+                        .closest('.message')
+                        .transition('fade')
+                        ;
+                })
+                ;
+        })
+    </script>
+</body>
+
+</html>

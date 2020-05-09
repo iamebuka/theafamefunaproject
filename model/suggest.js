@@ -1,5 +1,7 @@
 var mongoose = require("mongoose");
 
+// Schema for suggestion model
+// Suggestion model is used to store names suggested by users
 
 const suggestionSchema = new mongoose.Schema({
     "name": String,

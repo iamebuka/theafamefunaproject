@@ -1,0 +1,77 @@
+<section id="footer" style="min-height: 50vh">
+    <div class="ui grid stackable container">
+      <% if (locals.posts) { %>
+      <h1 style="margin-bottom: 50px;">Recent Blog Post</h1>
+      <div class="ui four stackable cards">
+
+        <% locals.posts.forEach(element => { %>
+
+        <div class="ui raised card">
+          <div class="content">
+            <a href="<%- element.url %>" class="header"><%= element.title %> </a>
+            <div class="meta">
+              <% element.tags.forEach((tag, index) => { %>
+              <% if (index < 3) { %>
+              <a href="https://blog.myigboname.com/tag/<%= tag.slug %> " class="ui yellow label" style="margin: 5px;">
+                <%= tag.name %>
+              </a>
+              <% } %>
+
+              <% }) %>
+            </div>
+            <div class="description">
+              <%- element.excerpt.substring(0, 150) %>
+              <span><a href="<%- element.url %>" class="header">...read more </a></span>
+            </div>
+          </div>
+        </div>
+
+        <% }) %>
+
+      </div>
+      <% } %>
+      <br />
+      <br />
+      <div class="ui equal width padded grid">
+        <div class="row">
+          <div class="white column">
+            <h3>The Afamefuna Project</h3>
+            The Idea behind this project is to build a repository of and preserving the meaning of Igbo names. This
+            goes beyond the archiving of conventional Igbo names or suggesting baby names. We also seek to understand 
+            the onomastics of older names which often make up our surnames. We hope that this becomes a platform you can
+            trust for Igbo names.
+          </div>
+          <div class="white column">
+
+          </div>
+
+        </div>
+        <div class="row">
+          <div class="column">
+            <header class="ui inverted menu stackable">
+              <a href="/" class="item logo">
+                <img src="../assets/afamefuna.png" />
+              </a>
+              <a href="/" class="item">
+                Home
+              </a>
+              <a href="/#contribute" class="item">
+                Contribute
+              </a>
+              <a href="/#contact" class="item">
+                Contacts
+              </a>
+              <a href="https://blog.myigboname.com" target="_blank" class="item">
+                Blog
+              </a>
+
+            </header>
+          </div>
+        </div>
+        <div class="row">
+          <div class="column centered"> &copy; 2019 - 2020</div>
+        </div>
+      </div>
+    </div>
+
+  </section>

@@ -10,7 +10,8 @@
   <meta name="twitter:site" content="@myigboname" />
   <meta property="og:url" content="http://www.myigboname.com/" />
   <meta property="og:title" content="The Afamefuna Project" />
-  <meta property="og:description" content="Whatever dialect of the Igbo Language you speak, you can find your name here. We are interested in learning what your name means or we can help you find the meaning." />
+  <meta property="og:description"
+    content="Whatever dialect of the Igbo Language you speak, you can find your name here. We are interested in learning what your name means or we can help you find the meaning." />
   <meta property="og:image" content="http://myigboname.com/assets/site-image.png" />
 
   <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
@@ -19,14 +20,14 @@
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="/semantic/dist/semantic.min.js"></script>
   <!-- Global site tag (gtag.js) - Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=UA-80337204-3"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-80337204-3"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag() { dataLayer.push(arguments); }
+    gtag('js', new Date());
 
-  gtag('config', 'UA-80337204-3');
-</script>
+    gtag('config', 'UA-80337204-3');
+  </script>
 
   <script type='text/javascript'
     src='//platform-api.sharethis.com/js/sharethis.js#property=5ce85cbcaf7d000012cb0c83&product=sticky-share-buttons'
@@ -37,8 +38,8 @@
 
     $(document).ready(function (params) {
 
-     
-     
+
+
       $('.ui.search')
         .search({
           apiSettings: {
@@ -54,7 +55,7 @@
 
               $.each(data.results, function (index, item) {
                 var
-                  id = item.name || 'Unknown', maxResults = 100;
+                  id = item.name || 'Unknown', maxResults = 5;
                 if (index >= maxResults) {
                   return false;
                 }
@@ -63,11 +64,11 @@
                 // add result to category
                 response.results.push({
                   title: item.name,
-                  url: `/entries/${item.name}`
+                  url: `/entries/${item.name.toLowerCase()}`
                 });
 
               })
-             
+
               return response;
             }
 
@@ -87,13 +88,12 @@
 
   <div class="app-header">
     <div class="ui fluid container">
-      <div class="padding">
-
+      <div class="m-spacing p-spacing">
         <div class="ui text container">
-          <p class="ui huge header">WELCOME TO THE AFAMEFUNA PROJECT</p>
-          <p class="ui tagline">Over 1000 entries yet & counting</p>
+          <p class="ui huge header">IGBO NAME</p>
+          <p class="ui tagline">What is the meaning of: </p>
           <div class="ui fluid search ">
-            <div class="ui icon big input">
+            <div class="ui left icon large input">
               <input class="prompt" type="text" placeholder="Search names...">
               <i class="search icon"></i>
             </div>
@@ -103,18 +103,177 @@
 
           <br />
           <p class="tagline">
-            Whatever dialect of the Igbo Language you speak, you can find your name here.
-            We are interested in learning what your name means or we can help you find the meaning.
-            Use the 'Contribute' section freely to improve community experience.
+            A dictionary of Igbo names. Translate Igbo names to English. Find the meaning of Igbo names and
+            use the 'Contribute' section freely to improve community experience.
           </p>
 
+          <% if (notd) { %>
+          <div class="ui horizontal list m-spacing">
+            <% notd.forEach(element => { %>
+            <div class="item">
+              <div class="content">
+                <a href="/entries/<%- element.name.toLowerCase() %>"><%- element.name %> </a>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
+          <br />
+          <br />
+          <% if (startWith) { %>
+          <div class="flexi">
+            <% startWith.forEach(element => { %>
+            <div class="item">
+              <div class="content">
+                <a href="/start-with/<%- element.index.toLowerCase() %> "> <%- element.index %></a>
+              </div>
+            </div>
+            <% }) %>
+          </div>
+          <% } %>
         </div>
       </div>
     </div>
   </div>
-  </div>
+  <section id="contribute">
+    <div class="ui grid centered stackable container">
+      <div class="seven wide column">
+        <div class="contact-form" style="position: relative;">
+          <form class="ui tiny form" method="POST" action="/contribute">
+            <div class="required field">
+              <label>Suggested Name</label>
+              <div class="field">
+                <input type="text" name="name" placeholder="First Name" value="<%= contribute %> " required>
+              </div>
+            </div>
+            <div class="required field">
+              <label>Meaning</label>
+              <div class="field">
+                <textarea name="meaning" required>
+              </textarea>
+              </div>
+            </div>
+            <div class="required field">
+              <label>Email (Provide email for feedback when entry is added)</label>
+              <div class="field">
+                <input type="email" name="email" placeholder="Email" required>
+              </div>
+            </div>
 
-     <div class="sharethis-inline-share-buttons"></div>
+            <br />
+            <br />
+
+            <button class="ui primary button fluid">
+              SUBMIT
+            </button>
+          </form>
+        </div>
+      </div>
+      <div class="three wide column">
+
+      </div>
+      <div class="six wide column">
+        <h1>Contribute</h1>
+        Know any Igbo names and its meaning you wish we should know? Have any Igbo names you want its meaning? Use the
+        contribute section and we will send you an email once it's up on the site.
+        <br />
+        <br />
+
+        Daalụ!
+
+
+      </div>
+
+
+    </div>
+  </section>
+  <section id="contact" style="min-height: 70vh; background-color: #fff;">
+    <div class="ui grid stackable container">
+      <div class="six wide column">
+        <h1>Get in Touch</h1>
+        <p>Join us, Write us</p>
+
+        <p>Do you have any ideas on how we could improve the site and get better? We are interested!</p>
+        <br />
+        <br />
+
+        <p>Follow us on Twitter and Facebook.</p>
+
+        <p><a href="mailto:info@myigboname.com">info@myigboname.com</a></p>
+
+        <div class="ui small horizontal list">
+          <div class="item">
+            <a href="https://www.facebook.com/afamefunaproject" class="ui circular facebook icon  button">
+              <i class="facebook icon"></i>
+            </a>
+          </div>
+          <div class="item">
+            <a href="https://www.twitter.com/myigboname" class="ui circular twitter icon button">
+              <i class="twitter icon"></i>
+            </a>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="three wide column">
+
+      </div>
+      <div class="seven wide column">
+        <div class="contact-form">
+          <h1 style="text-align: center">Write Us</h1>
+          <form class="ui tiny form" method="POST" action="/contact">
+            <div class="field">
+              <input type="text" name="email" placeholder="Email" required>
+            </div>
+            <div class="field">
+              <input type="text" name="subject" placeholder="Subject" required>
+            </div>
+            <div class="field">
+              <textarea name="message" row="2" placeholder="message" required></textarea>
+            </div>
+
+            <br>
+            <br>
+            <div class="field">
+              <button class="ui button primary fluid"> SEND</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+  <%- include("./shared/footer")%>
+
+  <div role="button" class="hover">
+    <a href="#contribute">
+      <i class="angle down icon"></i>
+    </a>
+  </div>
+  <div class="sharethis-inline-share-buttons"></div>
+
+  <% if (locals.success_messages.length > 0) { %>
+  <div class="ui positive compact floating message" style="position: fixed; top: 100px; right: 10px">
+    <i class="close icon"></i>
+    <div class="header">
+      Message Sent
+    </div>
+    <p><%- locals.success_messages %> </p>
+  </div>
+  <% } %>
+
+  <script>
+    $(document).ready(function () {
+      $('.message .close')
+        .on('click', function () {
+          $(this)
+            .closest('.message')
+            .transition('fade')
+            ;
+        })
+        ;
+    })
+  </script>
 </body>
 
 </html>

@@ -1,34 +1,59 @@
-@import url('https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap');
+@import url("https://fonts.googleapis.com/css?family=Roboto+Condensed&display=swap");
 
-.tagline{
-  letter-spacing: 1.5px;
-  font-family: 'Roboto Condensed', sans-serif;
-  }
-
-.ui.tagline{
-  font-size: 30px
-}
-body{
+body {
   padding: 0px;
   margin: 0px;
-  text-align:left;
-  background-color: #ececec
+  text-align: left;
+  background-color: #ececec;
 }
-.contact-card:nth-child(1){
-  margin-top: 150px
-}
-.contact-card{
-  margin-bottom: 50px;
-  }
 
-.contact-card > p{
-  color: #CF9237;
-  font-size: 16px;
-  font-weight: 700
+section {
+  padding: 20px;
+  min-height: 100vh;
 }
-.social{
- margin: 63px 0px 120px;
-  width: 100%
+
+.ui.form input[type="email"],
+.ui.form input[type="email"]:hover,
+.ui.form input[type="email"]:focus,
+.ui.form input[type="text"],
+.ui.form input[type="text"]:hover,
+.ui.form input[type="text"]:focus {
+  border-radius: 500rem;
+}
+
+.tagline {
+  letter-spacing: 1.5px;
+  font-family: "Roboto Condensed", sans-serif;
+}
+
+.contact-form {
+  padding: 23px;
+  border-radius: 2px;
+  -webkit-box-shadow: -6px -6px 14px -5px rgba(199, 187, 199, 0.13);
+  -moz-box-shadow: -6px -6px 14px -5px rgba(199, 187, 199, 0.13);
+  box-shadow: -6px -6px 14px -5px rgba(199, 187, 199, 0.13);
+  width: 100%;
+  height: 510px;
+  position: relative;
+  top: 0px;
+  left: 0px;
+  background: #fff;
+}
+.contact-card:nth-child(1) {
+  margin-top: 150px;
+}
+.contact-card {
+  margin-bottom: 50px;
+}
+
+.contact-card > p {
+  color: #fec831 /**#CF9237**/;
+  font-size: 16px;
+  font-weight: 700;
+}
+.social {
+  margin: 63px 0px 120px;
+  width: 100%;
 }
 
 .app-header {
@@ -50,8 +75,8 @@ body{
   background-blend-mode: overlay;
   background-repeat: no-repeat;
   background-size: cover;
-  background-position-y: -20px;
-background-position-x: -4px;
+  background-position-y: 0px;
+  background-position-x: -4px;
 }
 
 .app-header .ui.form input[type="text"] {
@@ -59,37 +84,34 @@ background-position-x: -4px;
 }
 
 .app-header .ui.header {
-  color: #CF9237;
+  color: #fec831 /**#CF9237**/;
 }
 
-.padding {
-  padding-top: 170px;
+.p-spacing {
+  padding-top: 96px;
 }
 
- 
-.padding55 {
-  padding-top: 55px
+.m-spacing {
+  margin-top: 30px;
 }
 
-.desc{
-  padding-top: 12px
-}
 
 /**overwrite library **/
-header.ui.menu{
+header.ui.menu {
   border-radius: 0px;
 }
 .ui.inverted.menu {
   border: none;
   -webkit-box-shadow: none;
-	box-shadow: none;
+  box-shadow: none;
+  background-color: #000;
 }
 .ui.huge.header {
   font-size: 25px;
   letter-spacing: 5px;
-text-align: center;
+  text-align: center;
 }
-.ui.huge.header + p{
+.ui.huge.header + p {
   text-align: center;
   font-size: 25px;
 }
@@ -112,10 +134,10 @@ text-align: center;
   height: 200px;
   width: 200px;
 }
-.ui.info.message{
+.ui.info.message {
   position: fixed;
- top: 0px;
- right: 10px;
+  top: 0px;
+  right: 10px;
 }
 .app-header .ui.form .inline.fields,
 .ui.form .fields {
@@ -138,58 +160,134 @@ text-align: center;
   display: flex;
 }
 
-.app-header .ui.search .prompt {
-  border-radius: 0px;
-}
-
 .ui.menu .item::before {
-	position: absolute;
-	content: '';
-	top: 0;
-	right: 0;
-	height: 100%;
-	width: 0px;
-	background: rgba(34,36,38,.1);
+  position: absolute;
+  content: "";
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 0px;
+  background: rgba(34, 36, 38, 0.1);
 }
 
-header.ui.menu .item{
-  padding:26px
+header.ui.menu .item {
+  padding: 26px;
 }
 
 .ui.inverted.menu .active.item {
-	color: #CF9237;
+  color: #fec831;
 }
 
-.ui.inverted.menu .item, .ui.inverted.menu .item > a:not(.ui) {
-	color: #CF9237;
+.ui.inverted.menu .item,
+.ui.inverted.menu .item > a:not(.ui) {
+  color: #fec831;
 }
 .ui.inverted.menu .active.item {
-	color: #CF9237;
+  color: #fec831;
 }
 
-.ui.inverted.menu .item, .ui.inverted.menu .item > a:not(.ui) {
-	color: #CF9237;
+.ui.inverted.menu .item,
+.ui.inverted.menu .item > a:not(.ui) {
+  color: #fec831;
 }
 
-.ui.primary.button, .ui.primary.buttons .button {
-	background-color: #CF9237;
-
+.ui.primary.button,
+.ui.primary.buttons .button {
+  background-color: #fec831;
 }
-.ui.primary.button:hover, .ui.primary.buttons .button:hover {
-  background-color: #CF9237;
+.ui.primary.button:hover,
+.ui.primary.buttons .button:hover {
+  background-color: #fec831;
   color: #fff;
   text-shadow: none;
 }
-@media(min-width: 800px){
-  .padding{
-    padding-top: 180px
-  }
-  
-  .desc{
-    padding-top: 28px
+
+@media (min-width: 800px) {
+  .padding {
+    padding-top: 180px;
   }
 
   .ui.huge.header {
     font-size: 41px;
-    }
+  }
+
+  section {
+    padding: 100px 60px;
+  }
+
+  .contact-form {
+    position: absolute;
+    padding: 50px;
+  }
+
+  .p-spacing {
+    padding-top: 125px;
+  }
+}
+
+#footer {
+  background-color: #000;
+  color: #fff;
+}
+
+.hover {
+  animation: shake 3s ease-in 2s infinite;
+  will-change: bottom;
+  cursor: pointer;
+  position: absolute;
+  left: 47%;
+  right: 50%;
+  bottom: 70px;
+  border-radius: 100%;
+  background: #000;
+  padding: 11px !important;
+  height: 40px;
+  width: 40px;
+}
+.hover:hover {
+  animation: none;
+}
+
+@keyframes shake {
+  25% {
+    bottom: 50px;
+  }
+
+  50% {
+    bottom: 70px;
+  }
+  75% {
+    bottom: 50px;
+  }
+  100% {
+    bottom: 70px;
+  }
+}
+
+div[role="button"]:hover {
+  animation: none;
+}
+
+a,
+a:hover,
+a:focus,
+a:visited {
+  color: #fec831;
+}
+a:hover {
+  text-decoration: underline;
+}
+
+.ui.card > .content > a.header:hover,
+.ui.cards > .card > .content > a.header:hover {
+  color: #fec831;
+}
+
+.flexi {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.flexi * {
+  flex: 1 1 0;
 }

@@ -1,22 +1,47 @@
 <div class="container">
-  <header class="ui inverted fixed menu">
+  <header class="ui inverted fixed menu stackable">
+    <a href="/" class="item logo">
+      <img src="../assets/afamefuna.png" />
+    </a>
     <a href="/" class="item">
       Home
     </a>
-    <a href="/contribute" class="item">
+    <a href="/#contribute" class="item">
       Contribute
     </a>
-    <a href="/contact" class="item">
+    <a href="/#contact" class="item">
       Contacts
     </a>
     <a href="https://blog.myigboname.com" target="_blank" class="item">
-     Blog
+      Blog
     </a>
-    
+    <div class="hamburger ">
+      <span class="hamburger-bun"></span>
+      <span class="hamburger-patty"></span>
+      <span class="hamburger-bun"></span>
+    </div>
   </header>
 </div>
+<link rel="stylesheet" type="text/css" href="/css/hamburger.css">
 <script>
-$(document).ready(function(){
-   $('.ui.dropdown').dropdown();
-})
+  $(document).ready(function () {
+    $('.ui.dropdown').dropdown();
+
+    $('.hamburger').click(function (e) {
+      $menu = $(this).parent();
+      if (!$(this).hasClass('active')) {
+        $(this).addClass('active');
+        $menu.addClass('open');
+      } else {
+        $(this).removeClass('active');
+        $menu.removeClass('open');
+      }
+      e.preventDefault();
+    });
+
+    $("a[href ^= '#']").click(e => {
+
+      console.log(e)
+    })
+  })
 </script>

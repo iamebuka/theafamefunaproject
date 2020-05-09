@@ -1,0 +1,63 @@
+Arguments: 
+  C:\Program Files\nodejs\node.exe C:\Users\obukw\AppData\Roaming\npm\node_modules\yarn\bin\yarn.js add node-cron
+
+PATH: 
+  C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\obukw\bin;C:\Users\obukw\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\local\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\usr\bin;C:\Program Files\Git\mingw64\bin;C:\Program Files\Git\usr\bin;C:\Users\obukw\bin;C:\Program Files (x86)\Common Files\Oracle\Java\javapath;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\iCLS;C:\Program Files\Intel\Intel(R) Management Engine Components\iCLS;C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0;C:\WINDOWS\System32\OpenSSH;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files\Intel\Intel(R) Management Engine Components\DAL;C:\Program Files (x86)\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Intel\Intel(R) Management Engine Components\IPT;C:\Program Files\Git\cmd;C:\Program Files\nodejs;C:\Users\obukw\AppData\Local\Microsoft\WindowsApps;C:\Users\obukw\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\obukw\AppData\Roaming\npm;C:\Program Files (x86)\heroku\bin;C:\Program Files\Git\usr\bin\vendor_perl;C:\Program Files\Git\usr\bin\core_perl
+
+Yarn version: 
+  1.19.1
+
+Node version: 
+  10.16.3
+
+Platform: 
+  win32 x64
+
+Trace: 
+  Error: EPERM: operation not permitted, unlink 'C:\work\theafamefunaproject\node_modules\bcrypt\lib\binding\bcrypt_lib.node'
+
+npm manifest: 
+  {
+    "name": "theafamefuna",
+    "version": "1.0.0",
+    "description": "",
+    "main": "server.js",
+    "scripts": {
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "serve": "nodemon server.js",
+      "lint": "eslint server.js"
+    },
+    "author": "",
+    "license": "ISC",
+    "engines": {
+      "node": "10.16.3"
+    },
+    "dependencies": {
+      "@tryghost/content-api": "^1.4.1",
+      "bcrypt": "^3.0.6",
+      "body-parser": "^1.19.0",
+      "connect-flash": "^0.1.1",
+      "connect-mongo": "^3.0.0",
+      "dotenv": "^7.0.0",
+      "ejs": "^2.6.1",
+      "express": "^4.16.4",
+      "express-session": "^1.16.1",
+      "mongoose": "^5.5.2",
+      "nodemailer": "^6.2.1",
+      "passport": "^0.4.0",
+      "passport-local": "^1.0.0",
+      "passport-twitter": "^1.0.4",
+      "semantic-ui": "^2.4.2"
+    },
+    "devDependencies": {
+      "csv-parser": "^2.2.0",
+      "eslint": "^5.16.0",
+      "eslint-config-google": "^0.12.0"
+    }
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile

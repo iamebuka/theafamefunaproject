@@ -1,0 +1,9 @@
+.desc div {
+    background: url('../assets/afamefuna-background.jpeg');
+    min-height: 350px;
+}
+
+body {
+    scroll-behavior: smooth;
+}
+

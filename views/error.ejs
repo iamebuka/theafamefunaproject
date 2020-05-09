@@ -5,9 +5,9 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Contribute | The Afamefuna Project</title>
   <link rel="stylesheet" type="text/css" href="/semantic/dist/semantic.min.css">
   <link rel="stylesheet" type="text/css" href="/css/index.css">
-  <link rel="stylesheet" type="text/css" href="/css/app.css">
   <script src="https://code.jquery.com/jquery-3.1.1.min.js"
     integrity="sha256-hVVnYaiADRTO2PzUGmuLJr8BLUSjGIZsDYGmIJLv2b8=" crossorigin="anonymous"></script>
   <script src="/semantic/dist/semantic.min.js"></script>
@@ -24,21 +24,19 @@
   <script type='text/javascript'
     src='//platform-api.sharethis.com/js/sharethis.js#property=5ce85cbcaf7d000012cb0c83&product=sticky-share-buttons'
     async='async'></script>
-  <title><%= response.name %> | The Afamefuna Project</title>
 
 </head>
 
 <body>
   <%- include("./shared/header")%>
-  <div class="ui container">
-    <div class="ui centered"
-      style="background-color: #fff; box-shadow: 0 1px 2px 0 rgba(34,36,38,.15);  padding: 120px 0px; min-height: 600px;">
-      <div class="column">
-        <div class="ui text fluid container">
-          <p class="ui tagline" style="margin: 5px auto;">Find the meaning of Igbo names</p>
-          <div class="ui search ">
-            <div class="ui icon input">
-              <input class="prompt" type="text" placeholder="Search names..." value="<%= response.name %>">
+  <div class="app-header">
+    <div class="ui fluid container">
+      <div class="padding55">
+        <div class="ui text container">
+          <p class="ui tagline">Find the meaning of Igbo names</p>
+          <div class="ui fluid search ">
+            <div class="ui icon big input">
+              <input class="prompt" type="text" placeholder="Search names...">
               <i class="search icon"></i>
             </div>
             <div class="results"></div>
@@ -46,42 +44,24 @@
 
           </div>
         </div>
-        <div class="ui text container">
-          <div class="very padded" style="margin-top: 50px;">
-            <% if(response) {%>
-            <h1><%= response.name %></h1>
-
-            <%if(response.definition){ %>
-            <%- response.definition %>
-            <% } else{%>
-            Be the first to contribute to this entry. Click here to <a
-              href="/?q=<%=response.name %>#contribute">contribute</a>
-            <% }%>
-
-            <% } else { %>
-            <p> Not found</p>
-
-            <% } %>
-          </div>
-        </div>
       </div>
+
     </div>
   </div>
-  <%- include("./shared/footer")%>
-
+  <%= error %>
   <div class="sharethis-inline-share-buttons"></div>
 </body>
 <script>
 
   $(document).ready(function (params) {
-
     $('.ui.search')
       .search({
         apiSettings: {
           url: '/search/{query}',
-          minCharacters: 3,
+          minCharacters: 2,
           type: 'category',
           onResponse: function (data) {
+            //console.log(data)
             var
               response = {
                 results: []
@@ -98,7 +78,7 @@
               // add result to category
               response.results.push({
                 title: item.name,
-                url: `/entries/${item.name.toLowerCase()}`
+                url: `/entries/${item.name}`
               });
 
             })
@@ -111,9 +91,6 @@
       })
 
   })
-
-
-
 </script>
 <style>
   .app-header {
