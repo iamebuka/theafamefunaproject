@@ -2,13 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 require('dotenv').config();
 const afamefunaModel = require('./model/afamefuna');
-const userModel = require('./model/user');
 const bodyParser = require('body-parser');
 mongoose.connect(process.env.DB_CONN_STRING, { useNewUrlParser: true, dbName: "db-afamefuna" });
-var db = mongoose.connection;
 const passport = require('passport');
-const localStrategy = require('passport-local').Strategy;
-const twitterStrategy = require('passport-twitter').Strategy;
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 const cron = require('cron').CronJob;
@@ -32,7 +28,6 @@ const app = express();
 app.use(secure)
 app.use(express.static('public'));
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(session({
   secret: process.env.SESSION_SECRETS,
@@ -53,46 +48,6 @@ app.use(async function (req, res, next) {
   next();
 });
 
-//setup local strategy
-passport.use(new localStrategy(
-  function (username, password, done) {
-    userModel.findOne({ 'accounts.uid': username }, '_id firstname lastname email accounts.password', function (err, user) {
-
-      if (err) { return done(err); }
-      if (!user) {
-        return done(null, false, { message: 'Incorrect username.' });
-      }
-      if (!user.isValidPassword(password)) {
-        return done(null, false, { message: 'Incorrect password.' });
-      }
-      return done(null, user);
-
-    })
-  }
-))
-
-passport.use(new twitterStrategy({
-  consumerKey: process.env.TWITTER_CONSUMER_KEY,
-  consumerSecret: process.env.TWITTER_CONSUMER_SECRET,
-  callbackURL: `${process.env.HOST_URL}/auth/twitter/callback`
-},
-  function (token, tokenSecret, profile, done) {
-    userModel.findOrCreate(profile, function (err, user) {
-      if (err) { return done(err); }
-      done(null, user);
-    })
-  }
-))
-
-passport.serializeUser(function (user, done) {
-  done(null, user._id);
-});
-
-passport.deserializeUser(function (id, done) {
-  userModel.findOne({ _id: id }, '_id firstname lastname email', function (err, user) {
-    done(err, user);
-  });
-});
 
 app.set('views', './views');
 app.set('view engine', 'ejs');
