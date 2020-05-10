@@ -91,8 +91,9 @@ router.get("/start-with/:index", function (req, res, next) {
 
 router.get('/entries/:name', function (req, res, next) {
     let nameParam = req.params.name;
+       
     afamefunaModel
-        .findOneAndUpdate({ name: { $regex: nameParam, $options: 'ix' } }, { $inc: { lookup_count: 1 } })
+        .findOneAndUpdate({ name: { $regex: "^" + nameParam + "$", $options: 'ix' } }, { $inc: { lookup_count: 1 } })
         .exec()
         .catch(function (err) {
             console.log(err)
