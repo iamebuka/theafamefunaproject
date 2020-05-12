@@ -84,7 +84,7 @@ app.get("*", function (req, res, next) { // catch all route handler
 })
 
 app.use(function (err, req, res, next) { // error handler
-  res.status(500)
+  res.status(err.type)
   res.render('error', { error: err.message })
 })
 
